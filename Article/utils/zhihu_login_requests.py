@@ -46,14 +46,17 @@ def get_index():
 
 def get_xsrf():
     # 获取_xsrf
+    test_text = '<iden" name="_xsrf" value="1545d4bbfb192d0428ce36ccf74cd6f9"pe="hidden" name="_xsrf" value="1545d4bbfb192d0428ce36ccf74cd6f9"/>'
     response = requests.get("https://www.zhihu.com", headers=header)
-    print(response.text)
-    match_obj = re.match('.*name="_xsrf" value="(.*?)"', response.text)
+    # text_1 = response.text[len(response.text) - 230:len(response.text)].lstrip()
+    # match_obj = re.match('.*me(.*?)"', text_1)
+    match_obj = re.match('.*name="_xsrf" value="(.*?)"', response.text, re.DOTALL)
     if match_obj:
         print(match_obj.group(1))
         return match_obj.group(1)
     else:
-        return ""
+        print("没匹配到")
+    return ""
 
 
 def zhihu_login(account, password):
@@ -63,6 +66,7 @@ def zhihu_login(account, password):
         post_url = "https://www.zhihu.com/login/phone_num"
         post_data = {
             "_xsrf": get_xsrf(),
+            "captcha_type": "cn",
             "phone_num": account,
             "password": password
         }
@@ -72,15 +76,16 @@ def zhihu_login(account, password):
             print("邮箱方式登录")
             post_url = "https://www.zhihu.com/login/email"
             post_data = {
-                "_xsrf": get_xsrf(),
+                "_xsrf": "109f18b25debea89e6057cceb3b25933",
                 "email": account,
+                "captcha_type": "cn",
                 "password": password
             }
     response_text = session.post(post_url, data=post_data, headers=header)
-    print(response_text)
     session.cookies.save()
 
 
-zhihu_login("18782902568", "admin123")
+# zhihu_login("17091314454", "cc5202012")
 # get_index()
 # is_login()
+get_xsrf()
