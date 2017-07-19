@@ -14,16 +14,15 @@ try:
 except:
     print("cookie未能加载")
 
-agent = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:51.0) Gecko/20100101 Firefox/51.0"
+# agent = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:51.0) Gecko/20100101 Firefox/51.0"
+agent = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:54.0) Gecko/20100101 Firefox/54.0"
 header = {
     "HOST": "www.zhihu.com",
     "Referer": "https://www.zhizhu.com",
-    'User-Agent': agent
-}
-header = {
-    "HOST": "www.zhihu.com",
-    "Referer": "https://www.zhizhu.com",
-    'User-Agent': agent
+    "User-Agent": agent,
+    "Accept": "*/*",
+    "Accept-Language": "zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3",
+    "Connection": "keep-alive"
 }
 
 
@@ -85,7 +84,7 @@ def zhihu_login(account, password):
     session.cookies.save()
 
 
-# zhihu_login("17091314454", "cc5202012")
+zhihu_login("17091314454", "cc5202012")
 # get_index()
 # is_login()
-get_xsrf()
+# get_xsrf()
