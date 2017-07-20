@@ -43,6 +43,26 @@ def get_index():
     print("ok")
 
 
+def get_captcha():
+    # 获取验证码
+    import time
+    t = str(int(time.time() * 1000))
+    captcha_url = "https://www.zhihu.com/captcha.gif?r={0}&type=login&lang=cn".format(t)
+    t = session.get(captcha_url, headers=header)
+    with open("captcha.jpg", "wb") as f:
+        f.write(t.content)
+        f.close()
+    from PIL import Image
+    try:
+        im = Image.open("captcha.jpg")
+        im.show()
+        im.close()
+    except:
+        pass
+    captcha = input("输入验证码\n")
+    return captcha
+
+
 def get_xsrf():
     # 获取_xsrf
     test_text = '<iden" name="_xsrf" value="1545d4bbfb192d0428ce36ccf74cd6f9"pe="hidden" name="_xsrf" value="1545d4bbfb192d0428ce36ccf74cd6f9"/>'
@@ -84,7 +104,8 @@ def zhihu_login(account, password):
     session.cookies.save()
 
 
-zhihu_login("17091314454", "cc5202012")
+# zhihu_login("17091314454", "cc5202012")
 # get_index()
 # is_login()
 # get_xsrf()
+get_captcha()

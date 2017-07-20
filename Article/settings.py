@@ -103,3 +103,6 @@ MYSQL_HOST = "127.0.0.1"
 MYSQL_DBNAME = "jobbole"
 MYSQL_USER = "root"
 MYSQL_PASSWORD = "111111"
+
+SQL_DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
+SQL_DATE_FORMAT = "%Y-%m-%d"
