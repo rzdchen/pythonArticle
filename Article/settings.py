@@ -3,6 +3,7 @@
 # Scrapy settings for Article project
 #
 import os
+import sys
 
 # For simplicity, this file contains only settings considered important or
 # commonly used. You can find more settings consulting the documentation:
@@ -74,6 +75,10 @@ ITEM_PIPELINES = {
 IMAGES_URLS_FIELD = "front_image_url"
 project_dir = os.path.abspath(os.path.dirname(__file__))
 IMAGES_STORE = os.path.join(project_dir, 'images')
+
+BASE_DIR = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
+sys.path.insert(0, os.path.join(BASE_DIR, "Article"))
+
 # 过滤掉小图片
 # IMAGES_MIN_HEIGHT = 100
 # IMAGES_MIN_WIDTH = 100
