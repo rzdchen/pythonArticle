@@ -54,9 +54,10 @@ ROBOTSTXT_OBEY = False
 
 # Enable or disable downloader middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
-# DOWNLOADER_MIDDLEWARES = {
-#    'Article.middlewares.MyCustomDownloaderMiddleware': 543,
-# }
+DOWNLOADER_MIDDLEWARES = {
+    'Article.middlewares.RandomUserAgentMiddleware': 543,
+    'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
+}
 
 # Enable or disable extensions
 # See http://scrapy.readthedocs.org/en/latest/topics/extensions.html
@@ -111,3 +112,5 @@ MYSQL_PASSWORD = "111111"
 
 SQL_DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 SQL_DATE_FORMAT = "%Y-%m-%d"
+
+RANDOM_UA_TYPE = "random"

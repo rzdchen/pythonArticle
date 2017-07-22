@@ -54,6 +54,20 @@ def remove_comment_tags(value):
         return value
 
 
+def replace_splash(value):
+    return value.replace("/", "")
+
+
+def handle_strip(value):
+    return value.strip()
+
+
+def handle_jobaddr(value):
+    addr_list = value.split("\n")
+    addr_list = [item.strip() for item in addr_list if item.strip() != "查看地图"]
+    return "".join(addr_list)
+
+
 class ArticleItemLoader(ItemLoader):
     # 自定义itemloader
     default_output_processor = TakeFirst()
@@ -238,17 +252,3 @@ class LagouJobItem(scrapy.Item):
                   self["company_name"], job_id)
 
         return insert_sql, params
-
-
-def replace_splash(value):
-    return value.replace("/", "")
-
-
-def handle_strip(value):
-    return value.strip()
-
-
-def handle_jobaddr(value):
-    addr_list = value.split("\n")
-    addr_list = [item.strip() for item in addr_list if item.strip() != "查看地图"]
-    return "".join(addr_list)
