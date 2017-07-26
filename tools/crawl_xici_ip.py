@@ -3,14 +3,14 @@ import requests
 from scrapy.selector import Selector
 import MySQLdb
 
-conn = MySQLdb.connect(host="127.0.0.1", user="root", passwd="root", db="article_spider", charset="utf8")
+conn = MySQLdb.connect(host="127.0.0.1", user="root", passwd="111111", db="jobbole", charset="utf8")
 cursor = conn.cursor()
 
 
 def crawl_ips():
     # 爬取西刺的免费ip代理
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101 Firefox/52.0"}
-    for i in range(1568):
+    for i in range(1, 1568):
         re = requests.get("http://www.xicidaili.com/nn/{0}".format(i), headers=headers)
 
         selector = Selector(text=re.text)
@@ -30,12 +30,7 @@ def crawl_ips():
             ip_list.append((ip, port, proxy_type, speed))
 
         for ip_info in ip_list:
-            cursor.execute(
-                "insert proxy_ip(ip, port, speed, proxy_type) VALUES('{0}', '{1}', {2}, 'HTTP')".format(
-                    ip_info[0], ip_info[1], ip_info[3]
-                )
-            )
-
+            cursor.execute("insert ignore proxy_ip(proxy_ip, port, speed, proxy_type) VALUES('{0}', '{1}', {2}, 'HTTP')".format(ip_info[0], ip_info[1], ip_info[3]))
             conn.commit()
 
 
@@ -91,7 +86,10 @@ class GetIP(object):
                 return self.get_random_ip()
 
 
-# print (crawl_ips())
-if __name__ == "__main__":
-    get_ip = GetIP()
-    get_ip.get_random_ip()
+                # print (crawl_ips())
+                # if __name__ == "__main__":
+                # get_ip = GetIP()
+                # get_ip.get_random_ip()
+
+
+crawl_ips()
