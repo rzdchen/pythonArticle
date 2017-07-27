@@ -14,15 +14,16 @@ try:
 except:
     print("cookie未能加载")
 
-# agent = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:51.0) Gecko/20100101 Firefox/51.0"
-agent = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:54.0) Gecko/20100101 Firefox/54.0"
+agent = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:51.0) Gecko/20100101 Firefox/51.0"
 header = {
     "HOST": "www.zhihu.com",
     "Referer": "https://www.zhizhu.com",
-    "User-Agent": agent,
-    "Accept": "*/*",
-    "Accept-Language": "zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3",
-    "Connection": "keep-alive"
+    'User-Agent': agent
+}
+header = {
+    "HOST": "www.zhihu.com",
+    "Referer": "https://www.zhizhu.com",
+    'User-Agent': agent
 }
 
 
@@ -41,26 +42,6 @@ def get_index():
     with open("index_page.html", "wb") as f:
         f.write(response.text.encode("utf-8"))
     print("ok")
-
-
-def get_captcha():
-    # 获取验证码
-    import time
-    t = str(int(time.time() * 1000))
-    captcha_url = "https://www.zhihu.com/captcha.gif?r={0}&type=login&lang=cn".format(t)
-    t = session.get(captcha_url, headers=header)
-    with open("captcha.jpg", "wb") as f:
-        f.write(t.content)
-        f.close()
-    from PIL import Image
-    try:
-        im = Image.open("captcha.jpg")
-        im.show()
-        im.close()
-    except:
-        pass
-    captcha = input("输入验证码\n")
-    return captcha
 
 
 def get_xsrf():
@@ -107,5 +88,4 @@ def zhihu_login(account, password):
 # zhihu_login("17091314454", "cc5202012")
 # get_index()
 # is_login()
-# get_xsrf()
-get_captcha()
+get_xsrf()
