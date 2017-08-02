@@ -11,6 +11,7 @@ import scrapy
 from scrapy.loader.processors import MapCompose, TakeFirst, Join
 from scrapy.loader import ItemLoader
 
+from Article.models.es_types import ArticleType
 from Article.settings import SQL_DATETIME_FORMAT
 from Article.utils.common import extract_num
 
@@ -120,6 +121,22 @@ class JobBoleArticleItem(scrapy.Item):
                   front_image_url, self["front_image_path"], self["praise_nums"], self["comment_nums"],
                   self["tags"], self["content"])
         return insert_sql, params
+
+    def save_to_es(self):
+        article = ArticleType()
+        article.title = self['title']
+        article.create_date = self["create_date"]
+        article.content = remove_tags(self["content"])
+        article.front_image_url = self["front_image_url"]
+        if "front_image_path" in self:
+            article.front_image_path = self["front_image_path"]
+        article.praise_nums = self["praise_nums"]
+        article.fav_nums = self["fav_nums"]
+        article.comment_nums = self["comment_nums"]
+        article.url = self["url"]
+        article.tags = self["tags"]
+        article.meta.id = self["url_object_id"]
+        article.save()
 
 
 class ZhihuQuestionItem(scrapy.Item):
