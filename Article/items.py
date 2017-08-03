@@ -17,6 +17,10 @@ from Article.utils.common import extract_num
 
 from w3lib.html import remove_tags
 
+from elasticsearch_dsl.connections import connections
+
+es = connections.create_connection(ArticleType._doc_type.using)
+
 
 class ArticleItem(scrapy.Item):
     # define the fields for your item here like:
@@ -67,6 +71,25 @@ def handle_jobaddr(value):
     addr_list = value.split("\n")
     addr_list = [item.strip() for item in addr_list if item.strip() != "查看地图"]
     return "".join(addr_list)
+
+
+def gen_suggests(index, info_tuple):
+    # 根据字符串生成搜索建议数组
+    used_words = set()
+    suggests = []
+    for text, weight in info_tuple:
+        if text:
+            # 调用es的analyze接口分析字符串
+            words = es.indices.analyze(index=index, analyzer="ik_max_word", params={'filter': ["lowercase"]}, body=text)
+            anylyzed_words = set([r["token"] for r in words["tokens"] if len(r["token"]) > 1])
+            new_words = anylyzed_words - used_words
+        else:
+            new_words = set()
+
+        if new_words:
+            suggests.append({"input": list(new_words), "weight": weight})
+
+    return suggests
 
 
 class ArticleItemLoader(ItemLoader):
@@ -136,6 +159,8 @@ class JobBoleArticleItem(scrapy.Item):
         article.url = self["url"]
         article.tags = self["tags"]
         article.meta.id = self["url_object_id"]
+
+        article.suggest = gen_suggests(ArticleType._doc_type.index, ((article.title, 10), (article.tags, 7)))
         article.save()
 
 
