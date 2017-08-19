@@ -63,11 +63,11 @@ CREATE TABLE `lagou_job` (
 DROP TABLE IF EXISTS `proxy_ip`;
 
 CREATE TABLE `proxy_ip` (
-  `ip` varchar(20) NOT NULL,
+  `proxy_ip` varchar(20) NOT NULL,
   `port` varchar(7) NOT NULL,
   `speed` float DEFAULT NULL,
   `proxy_type` varchar(5) DEFAULT NULL,
-  PRIMARY KEY (`ip`)
+  PRIMARY KEY (`proxy_ip`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Table structure for table `zhihu_answer` */

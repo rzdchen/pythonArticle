@@ -7,6 +7,8 @@
 import datetime
 
 import re
+
+import redis
 import scrapy
 from scrapy.loader.processors import MapCompose, TakeFirst, Join
 from scrapy.loader import ItemLoader
@@ -20,6 +22,8 @@ from w3lib.html import remove_tags
 from elasticsearch_dsl.connections import connections
 
 es = connections.create_connection(ArticleType._doc_type.using)
+
+redis_cli = redis.StrictRedis()
 
 
 class ArticleItem(scrapy.Item):
@@ -162,6 +166,8 @@ class JobBoleArticleItem(scrapy.Item):
 
         article.suggest = gen_suggests(ArticleType._doc_type.index, ((article.title, 10), (article.tags, 7)))
         article.save()
+
+        redis_cli.incr("jobbole_count")  # 变量加一操作
 
 
 class ZhihuQuestionItem(scrapy.Item):
