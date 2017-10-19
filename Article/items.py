@@ -5,6 +5,7 @@
 # See documentation in:
 # http://doc.scrapy.org/en/latest/topics/items.html
 import datetime
+import json
 
 import re
 
@@ -29,6 +30,7 @@ redis_cli = redis.StrictRedis()
 class ArticleItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
+    front_image_url = scrapy.Field()
     pass
 
 
@@ -133,8 +135,8 @@ class JobBoleArticleItem(scrapy.Item):
         #     """
         insert_sql = """
                 insert into article(title, url, create_date, fav_nums, front_image_url, front_image_path,
-                praise_nums, comment_nums, tags, content)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE content=VALUES(content),
+                praise_nums, comment_nums, tags, content, url_object_id)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE content=VALUES(content),
                 praise_nums=VALUES(praise_nums)
             """
 
@@ -146,7 +148,7 @@ class JobBoleArticleItem(scrapy.Item):
 
         params = (self["title"], self["url"], self["create_date"], self["fav_nums"],
                   front_image_url, self["front_image_path"], self["praise_nums"], self["comment_nums"],
-                  self["tags"], self["content"])
+                  self["tags"], self["content"], self["url_object_id"])
         return insert_sql, params
 
     def save_to_es(self):
@@ -299,4 +301,42 @@ class LagouJobItem(scrapy.Item):
                   self["company_url"],
                   self["company_name"], job_id)
 
+        return insert_sql, params
+
+
+class ImgTestItemLoader(ItemLoader):
+    # 自定义itemloader
+    default_output_processor = TakeFirst()
+
+
+class ImgTestItem(scrapy.Item):
+    title = scrapy.Field()
+    create_date = scrapy.Field(
+        input_processor=MapCompose(date_convert),
+    )
+    url = scrapy.Field()
+    url_object_id = scrapy.Field()
+    image_paths = scrapy.Field()
+    image_urls = scrapy.Field()
+
+    def get_insert_sql(self):
+        insert_sql = """
+                insert into img_a(title, create_date, url, front_image_url, front_image_path,
+                image_paths, image_urls, url_object_id)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE front_image_url=VALUES(front_image_url),
+                front_image_path=VALUES(front_image_path)
+            """
+
+        front_image_url = ""
+        front_image_path = ""
+        image_paths = json.dumps(self["image_paths"], ensure_ascii=False, encoding='UTF-8')
+        image_urls = json.dumps(self["image_urls"], ensure_ascii=False, encoding='UTF-8')
+
+        if self["image_urls"]:
+            front_image_url = self["image_urls"][0]
+        if self["image_paths"]:
+            front_image_path = self["image_paths"][0]
+
+        params = (self["title"], self["create_date"], self["url"],
+                  front_image_url, front_image_path, image_paths, image_urls, self["url_object_id"])
         return insert_sql, params

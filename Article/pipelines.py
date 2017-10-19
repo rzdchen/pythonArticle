@@ -43,6 +43,17 @@ class ArticleImagePipeline(ImagesPipeline):
             return item
 
 
+# 获取图片路径
+class ImageTestPipeline(ImagesPipeline):
+    def item_completed(self, results, item, info):
+        if "front_image_url" in item:
+            image_paths = []
+            for ok, value in results:
+                image_paths.append(value["path"])
+            item["image_paths"] = image_paths
+            return item
+
+
 class JsonExporterPipeline(object):
     # 调用scrapy提供的json export导出json文件
     def __init__(self):
